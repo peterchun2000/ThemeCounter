@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <title>Simple file upload using Python Flask</title>
+    </head>
+    <body>
+        <form method="POST" enctype="multipart/form-data" action="/upload">
+            <input type="file" name="file[]" multiple="">
+            <input type="submit" value="add">
+        </form>
+        <form method="post" action="/">
+            <input type="submit" value="Clear Files" name="clear_button"/>
+            <input type="submit" value="Submit" name="submit_buttom" />
+        </form>
+        <div>
+            {{table|safe}}
+        </div>
+        {{ dropzone.create(action='upload') }}
+        {{ dropzone.load_js() }}
+        {{ dropzone.config() }}
+    </body>
+</html>

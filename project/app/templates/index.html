@@ -1,0 +1,61 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Theme Counter{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+    $('input#my-file-selector').change(function(){
+        var files = $(this)[0].files;
+        
+        document.getElementById("browse-text").value=files.length + " file(s) selected";
+    });
+    </script>
+{% endblock %}
+
+{% block content %}
+
+<div class="jumbotron text-center">
+    <h1>Theme Counter</h1>
+    <p>For Qualitative Research Analysis with Google Docs</p> 
+</div>
+<div class="container-fluid text-center">
+    <div class="row">
+        <div class="col col-lg-6">
+            <h4>Enter Desired Threshhold Value 0.0 - 1.0 (not necessary)</h4>
+            <form  method="POST" class="form-inline center-block">
+                <div class="input-group">
+                    <input name="text" type="text" class="form-control" placeholder="Threshold Value">
+                </div>
+                <button type="submit" name="submit_t" value="enter" class="btn btn-primary">Enter</button>
+            </form>
+            <h5>
+                Threshold Value: {{t_val}}
+            </h5>
+        </div>
+        <div class="col col-lg-6">
+            <h4>Select File(s) hold down CTRL and click to upload multiple files</h4>
+
+            <form class="form-inline center-block" action="/" method="POST" enctype="multipart/form-data">
+                <div class="input-group">
+                    <label id="browsebutton" class="btn btn-default input-group-addon" for="my-file-selector" style="background-color:white">
+                        <input id="my-file-selector" type="file" name="file[]" multiple="" style="display:none;">
+                        Browse...
+                    </label>
+                    <input id="browse-text" type="text" class="form-control" readonly="">
+                </div>
+                <button type="submit" value="Submit Files" class="btn btn-primary">Submit Files</button>
+            </form>
+        </div>
+    </div>  
+</div>
+<hr>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-3"></div>
+        <div class="col-lg-6">
+            {{table|safe}}
+        </div>
+    </div>
+</div> 
+{% endblock %}
