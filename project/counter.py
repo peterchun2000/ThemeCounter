@@ -32,8 +32,6 @@ class SubTheme:
         return False
 
 def add_code_from_txt():
-
-
     my_path = os.path.abspath(os.path.dirname(__file__))
     path = os.path.join(my_path, "../project/code_chart.txt")
 
