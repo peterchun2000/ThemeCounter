@@ -6,6 +6,10 @@ import codecs
 
 from flask_table import Table, Col
 from flask import Flask, request, render_template, redirect, url_for
+
+import csv
+import os.path
+
 #global vars
 master_file = ""
 theme_dict = dict()
@@ -28,7 +32,14 @@ class SubTheme:
         return False
 
 def add_code_from_txt():
-    f = open('.code_chart.txt','r')
+
+
+    my_path = os.path.abspath(os.path.dirname(__file__))
+    path = os.path.join(my_path, "../project/code_chart.txt")
+# with open(path) as f:
+#     test = list(csv.reader(f))
+
+    f = open(path,'r')
     curr_main_theme = ""
     for line in f:
         text = line.strip()
