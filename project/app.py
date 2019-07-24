@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from bs4 import BeautifulSoup
 import re
 
-from counter import start, make_table
+from .counter import start, make_table
 
 from flask_bootstrap import Bootstrap
 
