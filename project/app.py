@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from bs4 import BeautifulSoup
 import re
 
-from .counter import start, make_table
+from counter import start, make_table, get_cmmts
 
 from flask_bootstrap import Bootstrap
 
@@ -27,17 +27,20 @@ def upload():
         except:
             thresh_val = .65
         return render_template('index.html',t_val = thresh_val)
-    else:
+    elif request.form.get('submit_f') =="Submit Files":
         uploaded_files = request.files.getlist("file[]")
         print (uploaded_files)
         print(thresh_val)
         start(uploaded_files,thresh_val)
         return make_table()
+    else:
+        return render_template('comment.html', comments = get_cmmts(request.form.get('btn_cmmt')))
 
 @app.route('/')
 def my_form():
     global thresh_val
     return render_template('index.html',t_val = thresh_val)
+
 
 if __name__ == '__main__':
     app.run()

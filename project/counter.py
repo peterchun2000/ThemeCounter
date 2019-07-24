@@ -10,21 +10,34 @@ from flask import Flask, request, render_template, redirect, url_for
 import csv
 import os.path
 
+import html
+
+from w3lib.html import replace_entities
+
 #global vars
-master_file = ""
 theme_dict = dict()
 main_theme_list = []
 soup =  BeautifulSoup(features="html.parser")
 sub_code_list = []
 sim_value = .50
 
+class Comment:
+    def __init__(self, comment, file_name):
+        self.file_name = file_name
+        self.comment = comment
+
+    def __eq__(self, other):
+        if isinstance(other, Comment):
+            return self.theme.lower() == other.theme.lower()
+        return False
+
 class SubTheme:
     def __init__(self, theme):
         self.theme = theme
         self.comments = []
     
-    def add_cmmts(self, text):
-        self.comments.append(text)
+    def add_cmmts(self, text, file_name):
+        self.comments.append(Comment(text,file_name))
 
     def __eq__(self, other):
         if isinstance(other, SubTheme):
@@ -56,10 +69,10 @@ def add_code_from_txt():
             theme_dict[curr_main_theme].append(SubTheme(single_sub_theme))
 
 
-def store_data():
+def store_data(file_in):
     global soup
     global theme_dict
-    soup = BeautifulSoup(master_file, "html.parser")
+    soup = BeautifulSoup(file_in, "html.parser")
     # for cmmt in soup.find_all('span', {'class' : 'c2'}):
     all_cmmts = soup.find_all("a", href=re.compile("cmnt_"))
     for cmmt in all_cmmts:
@@ -70,7 +83,7 @@ def store_data():
             original_text_list = comment_link.parent.parent.find_all("span")
             single_orig_text = ""
             for curr_text in original_text_list:
-                single_orig_text += " ... " + curr_text.text
+                single_orig_text +=  "\n" + curr_text.text
             print(single_orig_text)
         except:
             single_orig_text = "None"
@@ -121,7 +134,8 @@ def store_data():
 
                 index_of_curr = theme_dict[main_theme].index(SubTheme(sub_theme))
                 # print(formated_comment)
-                theme_dict[main_theme][index_of_curr].add_cmmts(single_orig_text)
+                print(replace_entities(single_orig_text))
+                theme_dict[main_theme][index_of_curr].add_cmmts(replace_entities(single_orig_text),file_in.filename)
 
 def fuzzy_best_match(cmmt, list_in):
     global sim_value
@@ -171,17 +185,15 @@ def calculate_data():
 
 def start(files_in, thresh_val):
     global theme_dict
-    global master_file
     global sim_value
     initialized = False
 
     sim_value = thresh_val
 
     for curr_file in files_in:
-        master_file = curr_file
         if initialized == False:
             add_code_from_txt()
-        store_data()
+        store_data(curr_file)
         initialized = True
 
     calculate_data()
@@ -191,28 +203,37 @@ class ItemTable(Table):
    m_theme = Col('Main Theme')
    sub_theme = Col('Sub Theme')
    count = Col('Count')
+   btn = Col('Comments')
 #    list_of_cmmts = Col('Comments')
 
 # Get some objects
 class Item(object):
-    def __init__(self, m_theme, sub_theme,count, list_of_cmmts):
+    def __init__(self, m_theme, sub_theme,count, list_of_cmmts, btn):
         self.m_theme = m_theme
         self.sub_theme = sub_theme
         self.count = count
         self.list_of_cmmts = list_of_cmmts
+        self.btn = btn
 
 def make_table():
     items = []
 
     for key, value in theme_dict.items():
         for sub_theme in value:
-            items.append(Item(key, sub_theme.theme, len(sub_theme.comments), sub_theme.comments))
+            items.append(Item(key, sub_theme.theme, len(sub_theme.comments), sub_theme.comments, '<form method="post" action="/"><input type="submit" value="'+sub_theme.theme+'" name="btn_cmmt" style="color:#3498DB;background-color:#3498DB;width:56px;height=50px;height:20px;"/></form>'))
             
     # Populate the table
     table = ItemTable(items)
 
-    # Print the html
-    print(table.__html__())
     table_html = str(table.__html__()).replace("<table>",'<table class="table">')
+    table_html = replace_entities(table_html)
+    
+    print(table_html)
     return render_template('index.html', table=table_html, t_val = sim_value)
     # or just {{ table }} from within a Jinja template
+
+def get_cmmts(sub_theme_in):
+    for key, value in theme_dict.items():
+        for sub_theme in value:
+            if(sub_theme == SubTheme(sub_theme_in)):
+                return sub_theme.comments

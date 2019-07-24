@@ -1,0 +1,25 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Theme Counter{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col col-lg-2"></div>
+        <div class="col col-lg-8">
+            <h1 class="text-center">Comments</h1>
+            <ul class="list-group">
+                {% for cmmt in comments %}
+                    <li class="list-group-item">
+                        {{ cmmt.file_name }} 
+                        <br>
+                        {{ cmmt.comment }}
+                    </li>
+                    <p></p>
+                {% endfor %}  
+            </ul>
+        </div> 
+    </div>
+</div>
+{% endblock %}
