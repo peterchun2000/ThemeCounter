@@ -28,7 +28,7 @@ class SubTheme:
         return False
 
 def add_code_from_txt():
-    f = open('code_chart.txt','r')
+    f = open('.code_chart.txt','r')
     curr_main_theme = ""
     for line in f:
         text = line.strip()
