@@ -10,8 +10,6 @@ from flask import Flask, request, render_template, redirect, url_for
 import csv
 import os.path
 
-import html
-
 from w3lib.html import replace_entities
 
 #global vars
