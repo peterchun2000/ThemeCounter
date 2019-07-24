@@ -37,3 +37,6 @@ def upload():
 @app.route('/')
 def my_form():
     return render_template('index.html',t_val = thresh_val)
+
+if __name__ == '__main__':
+    app.run()
