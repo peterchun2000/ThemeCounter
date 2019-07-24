@@ -26,7 +26,7 @@ class Comment:
 
     def __eq__(self, other):
         if isinstance(other, Comment):
-            return self.theme.lower() == other.theme.lower()
+            return self.comment.lower() == other.comment.lower()
         return False
 
 class SubTheme:
