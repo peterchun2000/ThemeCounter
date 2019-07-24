@@ -32,6 +32,8 @@ class SubTheme:
         return False
 
 def add_code_from_txt():
+    global theme_dict
+    theme_dict = dict()
     my_path = os.path.abspath(os.path.dirname(__file__))
     path = os.path.join(my_path, "../project/code_chart.txt")
 
