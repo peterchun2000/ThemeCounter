@@ -35,7 +35,6 @@ def add_code_from_txt():
         if(text[0] == "*"):
             #adds to main_theme_list (raw)
             main_theme_list.append(text[1:])
-            
             single_theme = text.split('|')[0][1:]
             curr_main_theme = single_theme
             #initalizes dict key
