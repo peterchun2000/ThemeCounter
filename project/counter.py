@@ -36,8 +36,6 @@ def add_code_from_txt():
 
     my_path = os.path.abspath(os.path.dirname(__file__))
     path = os.path.join(my_path, "../project/code_chart.txt")
-# with open(path) as f:
-#     test = list(csv.reader(f))
 
     f = open(path,'r')
     curr_main_theme = ""
