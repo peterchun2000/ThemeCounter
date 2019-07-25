@@ -235,3 +235,6 @@ def get_cmmts(sub_theme_in):
         for sub_theme in value:
             if(sub_theme == SubTheme(sub_theme_in)):
                 return sub_theme.comments
+    print("NO COM MENT LIST IN " + sub_theme_in)
+    return []
+            #make else here
