@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, session
 from werkzeug.utils import secure_filename
 
 from bs4 import BeautifulSoup
@@ -14,32 +14,50 @@ from flask_bootstrap import Bootstrap
 app = Flask(__name__)  
 Bootstrap(app)
 
+app.secret_key = 'sads9f8b378asbfas9ah'
 app.config['UPLOAD_PATH'] = './uploads'
-thresh_val = 0.65
+# thresh_val = 0.65
+
 @app.route("/", methods=["POST"])
 def upload():
-    global thresh_val
+    # thresh_val = .65
+    session['thresh_val'] = .65
     if request.form.get('submit_t') =="enter":
         processed_text = request.form['text']
         print(processed_text)
+        # print("from threash value" + str(len(session['theme_dict'])))
         try:
-            thresh_val = float(processed_text)
+            session['thresh_val'] = float(processed_text)
         except:
-            thresh_val = .65
-        return render_template('index.html',t_val = thresh_val)
+            session['thresh_val'] = .65
+        return render_template('index.html',t_val = session['thresh_val'])
     elif request.form.get('submit_f') =="Submit Files":
+        session['theme_dict'] = dict()
         uploaded_files = request.files.getlist("file[]")
-        print (uploaded_files)
-        print(thresh_val)
-        start(uploaded_files,thresh_val)
-        return make_table()
+        # print (uploaded_files)
+        # print(session['thresh_val'])
+        start(uploaded_files,session['thresh_val'])
+    
+        html_table = make_table(session['theme_dict'])
+
+        # print("from main main main" + str(len(session['theme_dict'])))
+        return render_template('index.html', table = html_table, t_val = session['thresh_val'])
     else:
+        # print("from main" + str(len(session['theme_dict'])))
         return render_template('comment.html', comments = get_cmmts(request.form.get('btn_cmmt')))
 
 @app.route('/')
 def my_form():
-    global thresh_val
-    return render_template('index.html',t_val = thresh_val)
+    # print("from MY FORM: " + str(len(session['theme_dict'])))
+    # if session['theme_dict'] == None:
+    #     print("MADE NEW MADE NEW MADE NEW")
+    #     session['theme_dict'] = dict()
+
+    # global thresh_val
+    try:
+        return render_template('index.html',t_val = session['thresh_val'] )
+    except:
+        return render_template('index.html',t_val = .65 )
 
 
 if __name__ == '__main__':
