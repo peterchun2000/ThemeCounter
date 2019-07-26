@@ -6,7 +6,7 @@ import codecs
 
 from flask_table import Table, Col
 from flask import Flask, request, render_template, redirect, url_for, session
-
+import flask
 import csv
 import os.path
 
@@ -215,9 +215,9 @@ class Item(object):
         self.list_of_cmmts = list_of_cmmts
         self.btn = btn
 
-def make_table(theme_dict_in):
+def make_table():
     items = []
-    theme_dict = theme_dict_in
+    theme_dict = session['theme_dict']
     for key, value in theme_dict.items():
         for sub_theme in value:
             items.append(Item(key, sub_theme.theme, len(sub_theme.comments), sub_theme.comments, '<form method="post"><input action="/" type="submit" value="'+sub_theme.theme+'" name="btn_cmmt" style="color:#3498DB;background-color:#3498DB;width:56px;height=50px;height:20px;"/></form>'))
