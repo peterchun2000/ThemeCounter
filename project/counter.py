@@ -5,18 +5,18 @@ from nltk.util import ngrams
 import codecs
 
 from flask_table import Table, Col
-from flask import Flask, request, render_template, redirect, url_for, session
-import flask
+from flask import Flask, request, render_template, redirect, url_for, session, jsonify
 import csv
 import os.path
 
 from w3lib.html import replace_entities
 
+import jsonpickle
 #global vars
 # theme_dict = dict()
-main_theme_list = []
+
 soup =  BeautifulSoup(features="html.parser")
-sub_code_list = []
+
 # sim_value = .50
 
 class Comment:
@@ -44,10 +44,13 @@ class SubTheme:
 
 def add_code_from_txt():
     # global theme_dict
-    theme_dict = session['theme_dict']
+    print("theme dict length from start: " + str(len(session['theme_dict'])))
+    theme_dict =dict()
+    print("theme dict length from start: " + str(len(session['theme_dict'])))
+    sub_code_list = session['sub_code_list']
     my_path = os.path.abspath(os.path.dirname(__file__))
     path = os.path.join(my_path, "../project/code_chart.txt")
-
+    main_theme_list =  session['main_theme_list']
     f = open(path,'r')
     curr_main_theme = ""
     for line in f:
@@ -65,11 +68,16 @@ def add_code_from_txt():
             sub_code_list.append(text)
 
             theme_dict[curr_main_theme].append(SubTheme(single_sub_theme))
+    return theme_dict
 
 
-def store_data(file_in, sim_value_in):
+def store_data(file_in, sim_value_in, initialized_list):
     global soup
-    theme_dict = session['theme_dict']
+    main_theme_list = session['main_theme_list']
+    sub_code_list = session['sub_code_list']
+    print("theme dict length from start: " + str(len(session['theme_dict'])))
+    theme_dict = initialized_list
+    print("theme dict length from start: " + str(len(session['theme_dict'])))
     soup = BeautifulSoup(file_in, "html.parser")
     # for cmmt in soup.find_all('span', {'class' : 'c2'}):
     all_cmmts = soup.find_all("a", href=re.compile("cmnt_"))
@@ -128,12 +136,15 @@ def store_data(file_in, sim_value_in):
                         theme_dict[main_theme] = []  
                     
                     #adds the appropriate 
+                    print("addings")
                     theme_dict[main_theme].append(SubTheme(sub_theme))
-
+                    print(len(theme_dict))
                 index_of_curr = theme_dict[main_theme].index(SubTheme(sub_theme))
                 # print(formated_comment)
                 # print(replace_entities(single_orig_text))
                 theme_dict[main_theme][index_of_curr].add_cmmts(replace_entities(single_orig_text),file_in.filename)
+    print("last in ",len(theme_dict))
+    return theme_dict
 
 def fuzzy_best_match(cmmt, list_in, sim_value_in):
     sim_value = sim_value_in
@@ -190,12 +201,13 @@ def start(files_in, thresh_val):
 
     for curr_file in files_in:
         if initialized == False:
-            add_code_from_txt()
-        store_data(curr_file, sim_value)
+            initialized_list=add_code_from_txt()
+        result_list = store_data(curr_file, sim_value,initialized_list )
         initialized = True
     # print("from start: "+ str(len(session['theme_dict'])))
     # print("TYPE OF THEME_DICT = " + str(type(session['theme_dict'])))
-    return session['theme_dict']
+    return result_list
+    # print("theme dict length from start: " + str(len(session['theme_dict'])))
     # calculate_data()
     # make_table()
 
@@ -215,9 +227,11 @@ class Item(object):
         self.list_of_cmmts = list_of_cmmts
         self.btn = btn
 
-def make_table():
+def make_table(result_list):
     items = []
-    theme_dict = session['theme_dict']
+    print("theme dict length from make table: " + str(len(session['theme_dict'])))
+    theme_dict = result_list
+    print("theme dict imput length from make table: " + str(len(theme_dict)))
     for key, value in theme_dict.items():
         for sub_theme in value:
             items.append(Item(key, sub_theme.theme, len(sub_theme.comments), sub_theme.comments, '<form method="post"><input action="/" type="submit" value="'+sub_theme.theme+'" name="btn_cmmt" style="color:#3498DB;background-color:#3498DB;width:56px;height=50px;height:20px;"/></form>'))
@@ -229,12 +243,13 @@ def make_table():
     table_html = replace_entities(table_html)
     # print("from make table method"+ str(len(theme_dict)))
     # print(table_html)
+    session['theme_dict'] = jsonpickle.encode(result_list)
     return table_html
     # or just {{ table }} from within a Jinja template
 
 def get_cmmts(sub_theme_in):
-    theme_dict = session['theme_dict']
-    # print(len(theme_dict))
+    theme_dict = jsonpickle.decode(session['theme_dict'])
+    print(len(theme_dict))
     for key, value in theme_dict.items():
         for sub_theme in value:
             if(sub_theme == SubTheme(sub_theme_in)):

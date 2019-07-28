@@ -6,10 +6,11 @@ from werkzeug.utils import secure_filename
 from bs4 import BeautifulSoup
 import re
 
-from counter import start, make_table, get_cmmts
+from counter import start, make_table, get_cmmts, Comment, SubTheme
 
 from flask_bootstrap import Bootstrap
 
+import jsonpickle
 #global vars
 app = Flask(__name__)  
 Bootstrap(app)
@@ -30,30 +31,44 @@ def upload():
             session['thresh_val'] = .65
         return render_template('index.html',t_val = session['thresh_val'])
     elif request.form.get('submit_f') =="Submit Files":
+        if 'thresh_val' not in session:
+            session['thresh_val'] = .65
+        session['theme_dict'] =""
+        session['main_theme_list'] = []
+        session['sub_code_list'] = []
         uploaded_files = request.files.getlist("file[]")
         print (uploaded_files)
-        print(session['thresh_val'])
-        results = start(uploaded_files,session['thresh_val'])
-        print(results)
-        html_table = make_table()
-        return render_template('index.html', table = html_table, t_val = session['thresh_val'])
-        
+        # print(session['thresh_val'])
+        result_list = start(uploaded_files,session['thresh_val'])
+        table_html = make_table(result_list)
+        session['theme_dict'] = jsonpickle.encode(result_list)
+        print("right before main" + str(len(session['theme_dict'])))
+        return render_template('index.html', table = table_html, t_val = session['thresh_val'])
     else:
+
         print("from main" + str(len(session['theme_dict'])))
         return render_template('comment.html', comments = get_cmmts(request.form.get('btn_cmmt')))
 
 @app.route('/')
 def my_form():
+    session.clear()
+    print("sleared session")
     try:
         len(session['theme_dict'])
     except:
         session['theme_dict'] = dict()
+        session['main_theme_list'] = []
+        session['sub_code_list'] = []
 
     # global thresh_val
     try:
         return render_template('index.html',t_val = session['thresh_val'] )
     except:
-        return render_template('index.html',t_val = .64 )
+        session['thresh_val'] = .65
+        session['theme_dict'] = ""
+        session['main_theme_list'] = []
+        session['sub_code_list'] = []
+        return render_template('index.html',t_val = .65 )
 
 
 if __name__ == '__main__':
