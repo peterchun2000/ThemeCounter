@@ -12,6 +12,10 @@ import os.path
 from w3lib.html import replace_entities
 
 import jsonpickle
+from flask import g
+
+from itertools import count
+import re
 #global vars
 # theme_dict = dict()
 
@@ -26,7 +30,7 @@ class Comment:
 
     def __eq__(self, other):
         if isinstance(other, Comment):
-            return self.comment.lower() == other.comment.lower()
+            return self.comment == other.comment
         return False
 
 class SubTheme:
@@ -39,18 +43,18 @@ class SubTheme:
 
     def __eq__(self, other):
         if isinstance(other, SubTheme):
-            return self.theme.lower() == other.theme.lower()
+            return self.theme == other.theme
         return False
 
 def add_code_from_txt():
     # global theme_dict
-    print("theme dict length from start: " + str(len(session['theme_dict'])))
+    # print("theme dict length from start: " + str(len(session['theme_dict'])))
     theme_dict =dict()
-    print("theme dict length from start: " + str(len(session['theme_dict'])))
-    sub_code_list = session['sub_code_list']
+    # print("theme dict length from start: " + str(len(session['theme_dict'])))
+    sub_code_list = g.sub_code_list
     my_path = os.path.abspath(os.path.dirname(__file__))
     path = os.path.join(my_path, "../project/code_chart.txt")
-    main_theme_list =  session['main_theme_list']
+    main_theme_list =  g.main_theme_list
     f = open(path,'r')
     curr_main_theme = ""
     for line in f:
@@ -73,11 +77,11 @@ def add_code_from_txt():
 
 def store_data(file_in, sim_value_in, initialized_list):
     global soup
-    main_theme_list = session['main_theme_list']
-    sub_code_list = session['sub_code_list']
-    print("theme dict length from start: " + str(len(session['theme_dict'])))
+    main_theme_list = g.main_theme_list
+    sub_code_list = g.sub_code_list
+    # print("theme dict length from start: " + str(len(session['theme_dict'])))
     theme_dict = initialized_list
-    print("theme dict length from start: " + str(len(session['theme_dict'])))
+    # print("theme dict length from start: " + str(len(session['theme_dict'])))
     soup = BeautifulSoup(file_in, "html.parser")
     # for cmmt in soup.find_all('span', {'class' : 'c2'}):
     all_cmmts = soup.find_all("a", href=re.compile("cmnt_"))
@@ -212,44 +216,78 @@ def start(files_in, thresh_val):
     # make_table()
 
 class ItemTable(Table):
-   m_theme = Col('Main Theme')
-   sub_theme = Col('Sub Theme')
-   count = Col('Count')
-   btn = Col('Comments')
+    m_theme = Col('Main Theme')
+    sub_theme = Col('Sub Theme')
+    count = Col('Count')
+    bttn = Col('')
+#    comments = Col('Comments')
 #    list_of_cmmts = Col('Comments')
 
 # Get some objects
 class Item(object):
-    def __init__(self, m_theme, sub_theme,count, list_of_cmmts, btn):
+    def __init__(self, m_theme, sub_theme,count, list_of_cmmts, bttn):
         self.m_theme = m_theme
         self.sub_theme = sub_theme
         self.count = count
         self.list_of_cmmts = list_of_cmmts
-        self.btn = btn
+        self.bttn = bttn
 
 def make_table(result_list):
     items = []
-    print("theme dict length from make table: " + str(len(session['theme_dict'])))
+    # print("theme dict length from make table: " + str(len(session['theme_dict'])))
     theme_dict = result_list
-    print("theme dict imput length from make table: " + str(len(theme_dict)))
+    # print("theme dict imput length from make table: " + str(len(theme_dict)))
     for key, value in theme_dict.items():
         for sub_theme in value:
-            items.append(Item(key, sub_theme.theme, len(sub_theme.comments), sub_theme.comments, '<form method="post"><input action="/" type="submit" value="'+sub_theme.theme+'" name="btn_cmmt" style="color:#3498DB;background-color:#3498DB;width:56px;height=50px;height:20px;"/></form>'))
+            items.append(Item(key, sub_theme.theme, len(sub_theme.comments), sub_theme.comments, '<button type="button" data-toggle="collapse" data-target="#demo" class="accordion-toggle btn btn-secondary">View Comments</button>'))
+            
             
     # Populate the table
     table = ItemTable(items)
 
     table_html = str(table.__html__()).replace("<table>",'<table class="table">')
+    print(table_html)
     table_html = replace_entities(table_html)
+
+    counter1 = count(1)
+    table_html = re.sub('data-target="#demo', lambda m: m.group() + str(next(counter1)), table_html)
+    
+    table_html = str(table_html.replace("</td></tr>", '</td></tr> <tr> <td colspan="6" class="hiddenRow"style="padding:0!important;"><div class="accordian-body collapse" id="demo"> <ul class="list-group"> [cmmt] </ul> </div></td></tr>'))
+    counter2 = count(1)
+    table_html = re.sub('id="demo', lambda m: m.group() + str(next(counter2)), table_html)
+    for key, value in theme_dict.items():
+        for sub_theme in value:
+            table_html = table_html.replace('[cmmt]', get_cmmts(sub_theme.theme, theme_dict),1)
+
+    # print(table_html)
+    
+    
     # print("from make table method"+ str(len(theme_dict)))
     # print(table_html)
-    session['theme_dict'] = jsonpickle.encode(result_list)
+    g.theme_dict = result_list
+
     return table_html
     # or just {{ table }} from within a Jinja template
 
-def get_cmmts(sub_theme_in):
-    theme_dict = jsonpickle.decode(session['theme_dict'])
-    print(len(theme_dict))
+def get_cmmts(sub_theme_in, theme_dict_in):
+    theme_dict = theme_dict_in
+
+    result_str = ""
+    for key, value in theme_dict.items():
+        for sub_theme in value:
+            if(sub_theme == SubTheme(sub_theme_in)):
+                for ind_cmmt in sub_theme.comments:
+    
+                    result_str += '<li class="list-group-item">'+'<b>' + ind_cmmt.file_name + '</b>' + '<br>' + ind_cmmt.comment+"</li>"
+            # print("NO COM MENT LIST IN " + sub_theme_in)
+
+    return result_str
+            #make else here
+
+def get_subtheme_list():
+    theme_dict = g.theme_dict 
+    result_list = []
+
     for key, value in theme_dict.items():
         for sub_theme in value:
             if(sub_theme == SubTheme(sub_theme_in)):
