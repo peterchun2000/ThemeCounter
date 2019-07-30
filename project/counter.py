@@ -239,9 +239,8 @@ def make_table(result_list):
     # print("theme dict imput length from make table: " + str(len(theme_dict)))
     for key, value in theme_dict.items():
         for sub_theme in value:
-            items.append(Item(key, sub_theme.theme, len(sub_theme.comments), sub_theme.comments, '<button type="button" data-toggle="collapse" data-target="#demo" class="accordion-toggle btn btn-secondary">View Comments</button>'))
-            
-            
+            items.append(Item(key, sub_theme.theme, len(sub_theme.comments), sub_theme.comments, '<button type="button" data-toggle="collapse" data-target="#demo" class="accordion-toggle btn btn-default">Comments</button>'))
+              
     # Populate the table
     table = ItemTable(items)
 
