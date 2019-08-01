@@ -250,7 +250,7 @@ def make_table(result_list):
     # Populate the table
     table = ItemTable(items)
 
-    table_html = table.__html__().encode('utf-8').replace("<table>",'<table class="table">')
+    table_html = str(table.__html__().replace("<table>",'<table class="table">'))
     # print(table_html)
     table_html = replace_entities(table_html)
 
