@@ -16,12 +16,9 @@ from flask import g
 
 from itertools import count
 import re
+
 #global vars
-# theme_dict = dict()
-
 soup =  BeautifulSoup(features="html.parser")
-
-# sim_value = .50
 
 class Comment:
     def __init__(self, comment, file_name):
@@ -79,11 +76,11 @@ def store_data(file_in, sim_value_in, initialized_list):
     global soup
     main_theme_list = g.main_theme_list
     sub_code_list = g.sub_code_list
-    # print("theme dict length from start: " + str(len(session['theme_dict'])))
+
     theme_dict = initialized_list
-    # print("theme dict length from start: " + str(len(session['theme_dict'])))
+
     soup = BeautifulSoup(file_in, "html.parser")
-    # for cmmt in soup.find_all('span', {'class' : 'c2'}):
+
     all_cmmts = soup.find_all("a", href=re.compile("cmnt_"))
     for cmmt in all_cmmts:
         ref_num_indx = str(cmmt['href']).find('ref')
@@ -94,15 +91,11 @@ def store_data(file_in, sim_value_in, initialized_list):
             single_orig_text = ""
             for curr_text in original_text_list:
                 single_orig_text +=  "\n" + curr_text.text
-            # print(single_orig_text)
+
         except:
-            single_orig_text = "None"
-        # print ("Found the URL:", cmmt['href'])
+
         parent_of_cmmt = cmmt.parent.parent
         comments = parent_of_cmmt.find_all("span")
-        # if len(comments) > 1:
-        #     for cmmt in comments:
-        #         print("the ones with more: "+cmmt.text)
         for comment in comments:
             if comment.text.replace(" ", "") == "" or comment.text[0]=="[":
                 print("contineudasdf")
@@ -153,11 +146,9 @@ def store_data(file_in, sim_value_in, initialized_list):
                         theme_dict[main_theme] = []
                     
                     #adds the appropriate 
-
                     theme_dict[main_theme].append(SubTheme(sub_theme))
                 index_of_curr = theme_dict[main_theme].index(SubTheme(sub_theme))
-                # print(formated_comment)
-                # print(replace_entities(single_orig_text))
+
                 theme_dict[main_theme][index_of_curr].add_cmmts(replace_entities(single_orig_text),file_in.filename)
     return theme_dict
 
@@ -186,7 +177,6 @@ def fuzzy_finder(needle_in, hay_in):
     overall_max_sim_val = 0
 
     for nddle in needles:
-        # print(str(len(needles))+" "+ nddle)
         needle_length  = len(nddle.split())
         max_sim_val    = 0
         max_sim_string = u""
@@ -203,8 +193,6 @@ def fuzzy_finder(needle_in, hay_in):
     return overall_max_sim_val
 
 def start(files_in, thresh_val):
-    # global theme_dict
-    # global sim_value
     initialized = False
 
     sim_value = thresh_val
@@ -214,20 +202,15 @@ def start(files_in, thresh_val):
             initialized_list=add_code_from_txt()
         result_list = store_data(curr_file, sim_value,initialized_list )
         initialized = True
-    # print("from start: "+ str(len(session['theme_dict'])))
-    # print("TYPE OF THEME_DICT = " + str(type(session['theme_dict'])))
-    return result_list
-    # print("theme dict length from start: " + str(len(session['theme_dict'])))
-    # calculate_data()
-    # make_table()
 
+    return result_list
+
+# for the table
 class ItemTable(Table):
     m_theme = Col('Main Theme')
     sub_theme = Col('Sub Theme')
     count = Col('Count')
     bttn = Col('')
-#    comments = Col('Comments')
-#    list_of_cmmts = Col('Comments')
 
 # Get some objects
 class Item(object):
@@ -240,9 +223,8 @@ class Item(object):
 
 def make_table(result_list):
     items = []
-    # print("theme dict length from make table: " + str(len(session['theme_dict'])))
     theme_dict = result_list
-    # print("theme dict imput length from make table: " + str(len(theme_dict)))
+
     for key, value in theme_dict.items():
         for sub_theme in value:
             items.append(Item(key, sub_theme.theme, len(sub_theme.comments), sub_theme.comments, '<button type="button" data-toggle="collapse" data-target="#demo" class="accordion-toggle btn btn-default">Comments</button>'))
@@ -263,16 +245,9 @@ def make_table(result_list):
     for key, value in theme_dict.items():
         for sub_theme in value:
             table_html = table_html.replace('[cmmt]', get_cmmts(sub_theme.theme, theme_dict),1)
-
-    # print(table_html)
-    
-    
-    # print("from make table method"+ str(len(theme_dict)))
-    # print(table_html)
     g.theme_dict = result_list
 
     return table_html
-    # or just {{ table }} from within a Jinja template
 
 def get_cmmts(sub_theme_in, theme_dict_in):
     theme_dict = theme_dict_in
@@ -284,10 +259,8 @@ def get_cmmts(sub_theme_in, theme_dict_in):
                 for ind_cmmt in sub_theme.comments:
     
                     result_str += '<li class="list-group-item">'+'<b>' + ind_cmmt.file_name + '</b>' + '<br>' + ind_cmmt.comment+"</li>"
-            # print("NO COM MENT LIST IN " + sub_theme_in)
-
     return result_str
-            #make else here
+
 
 def get_subtheme_list():
     theme_dict = g.theme_dict 
@@ -297,6 +270,5 @@ def get_subtheme_list():
         for sub_theme in value:
             if(sub_theme == SubTheme(sub_theme_in)):
                 return sub_theme.comments
-    # print("NO COM MENT LIST IN " + sub_theme_in)
     return []
-            #make else here
+
