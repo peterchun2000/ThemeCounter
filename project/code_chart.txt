@@ -1,5 +1,5 @@
 *Pre-College Factors|Pre-College|Pre College|Pre-College:
-Educational Background
+Educational Background|math|life science|k-12|physical science|physics|science|english
 College Choice Process
 Private Schooling
 Academic Challenges 
@@ -31,10 +31,11 @@ Identity
 Financial Attitudes
 Self-Confidence
 *Adjustment
-Transition to the Community College|Transition to the CC|Transition to CC|Comunity College|CC
-Transition to the Four-Year School|Transition to 4-year|Transition to the 4-year|4-year (|four year
+Transition to the Community College|Transition to the CC|Transition to CC|Comunity College
+Transition to the Four-Year School|Transition to 4-year|Transition to four year
 *Family Influence|Family
-Parents 
+Parents|parents(mother)|parents(father)|Role Models (within family)
+brother
 Family Friends
 Extended Family 
 *Expectations 

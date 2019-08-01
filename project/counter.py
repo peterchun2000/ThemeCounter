@@ -100,9 +100,12 @@ def store_data(file_in, sim_value_in, initialized_list):
         # print ("Found the URL:", cmmt['href'])
         parent_of_cmmt = cmmt.parent.parent
         comments = parent_of_cmmt.find_all("span")
-
+        # if len(comments) > 1:
+        #     for cmmt in comments:
+        #         print("the ones with more: "+cmmt.text)
         for comment in comments:
-            if comment.text.replace(" ", "") == "":
+            if comment.text.replace(" ", "") == "" or comment.text[0]=="[":
+                print("contineudasdf")
                 continue
             comment_sub_list = []
             # splitter
@@ -113,18 +116,24 @@ def store_data(file_in, sim_value_in, initialized_list):
                 comment_sub_list.append(mod_comment[index_of_coln:index_slash])
                 comment_sub_list.append(mod_comment[index_slash+1:])
             else:
-                comment_sub_list.append(mod_comment)
+                if index_of_coln != -1:
+                    comment_sub_list.append(mod_comment[index_of_coln:])
+                else:
+                    comment_sub_list.append(mod_comment)
             
             #sets main theme
             if index_of_coln != -1:
                 main_theme = fuzzy_best_match(comment.text[0:index_of_coln], main_theme_list, sim_value_in)
             else:
-                main_theme = fuzzy_best_match(comment.text, main_theme_list, sim_value_in)
+                # print(comment.text)
+                main_theme = fuzzy_best_match(comment.text, main_theme_list, sim_value_in-.05)
 
             for formated_comment in comment_sub_list:
                 # main_theme = fuzzy_best_match(formated_comment, main_theme_list)
+                # print(formated_comment)
                 sub_theme = fuzzy_best_match(formated_comment, sub_code_list, sim_value_in)
-                
+                if sub_theme.replace(" ","") == "":
+                    continue
                 #checks if the sub theme already exists
                 sub_theme_in_list = False 
                 for key, value in theme_dict.items():
@@ -144,13 +153,12 @@ def store_data(file_in, sim_value_in, initialized_list):
                         theme_dict[main_theme] = []
                     
                     #adds the appropriate 
-                    print("addings")
+
                     theme_dict[main_theme].append(SubTheme(sub_theme))
                 index_of_curr = theme_dict[main_theme].index(SubTheme(sub_theme))
                 # print(formated_comment)
                 # print(replace_entities(single_orig_text))
                 theme_dict[main_theme][index_of_curr].add_cmmts(replace_entities(single_orig_text),file_in.filename)
-    print("last in ",len(theme_dict))
     return theme_dict
 
 def fuzzy_best_match(cmmt, list_in, sim_value_in):
@@ -166,6 +174,7 @@ def fuzzy_best_match(cmmt, list_in, sim_value_in):
     if largest_sim_val >= sim_value:
         return best_match_list[0]
     else:
+        print("loswer comment" + cmmt)
         return cmmt
 
 
@@ -175,7 +184,9 @@ def fuzzy_finder(needle_in, hay_in):
     needles = needle.split('|')
     
     overall_max_sim_val = 0
+
     for nddle in needles:
+        # print(str(len(needles))+" "+ nddle)
         needle_length  = len(nddle.split())
         max_sim_val    = 0
         max_sim_string = u""
@@ -187,17 +198,9 @@ def fuzzy_finder(needle_in, hay_in):
                 max_sim_val = similarity
                 max_sim_string = hay_ngram
 
-                if max_sim_val >= overall_max_sim_val:
+                if max_sim_val > overall_max_sim_val:
                     overall_max_sim_val = max_sim_val
-    return max_sim_val
-
-def calculate_data():
-    for key, value in theme_dict.items():
-        print("________________"+ key + "__________________")
-        for indv_theme in value:
-            print(str(indv_theme.theme) + " ~~ "+ str(len(indv_theme.comments)))      
-        print("")
-
+    return overall_max_sim_val
 
 def start(files_in, thresh_val):
     # global theme_dict
@@ -247,14 +250,14 @@ def make_table(result_list):
     # Populate the table
     table = ItemTable(items)
 
-    table_html = str(table.__html__()).replace("<table>",'<table class="table">')
-    print(table_html)
+    table_html = table.__html__().encode('utf-8').replace("<table>",'<table class="table">')
+    # print(table_html)
     table_html = replace_entities(table_html)
 
     counter1 = count(1)
     table_html = re.sub('data-target="#demo', lambda m: m.group() + str(next(counter1)), table_html)
     
-    table_html = str(table_html.replace("</td></tr>", '</td></tr> <tr> <td colspan="6" class="hiddenRow"style="padding:0!important;"><div class="accordian-body collapse" id="demo"> <ul class="list-group"> [cmmt] </ul> </div></td></tr>'))
+    table_html = table_html.replace("</td></tr>", '</td></tr> <tr> <td colspan="6" class="hiddenRow"style="padding:0!important;"><div class="accordian-body collapse" id="demo"> <ul class="list-group"> [cmmt] </ul> </div></td></tr>')
     counter2 = count(1)
     table_html = re.sub('id="demo', lambda m: m.group() + str(next(counter2)), table_html)
     for key, value in theme_dict.items():
