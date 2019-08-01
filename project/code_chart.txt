@@ -32,7 +32,7 @@ Financial Attitudes
 Self-Confidence
 *Adjustment
 Transition to the Community College|Transition to the CC|Transition to CC|Comunity College|CC
-Transition to the Four-Year School|Transition to 4-year|Transition to the 4-year|4-year|four-year|4 year|four year
+Transition to the Four-Year School|Transition to 4-year|Transition to the 4-year|4-year (|four-year|4 year|four year
 *Family Influence|Family
 Parents 
 Family Friends
@@ -43,7 +43,7 @@ Cultural
 Self
 Transfer
 *Capital
-Social Network
+Social Network|Social Capital
 College Information 
 *Personal Goals
 Personal Goals

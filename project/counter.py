@@ -43,7 +43,7 @@ class SubTheme:
 
     def __eq__(self, other):
         if isinstance(other, SubTheme):
-            return self.theme == other.theme
+            return self.theme.lower() == other.theme.lower()
         return False
 
 def add_code_from_txt():
@@ -113,9 +113,12 @@ def store_data(file_in, sim_value_in, initialized_list):
                 comment_sub_list.append(mod_comment[index_slash+1:])
             else:
                 comment_sub_list.append(mod_comment)
-
+            index_of_coln = comment.text.find(":")
             #sets main theme
-            main_theme = fuzzy_best_match(comment_sub_list[0], main_theme_list, sim_value_in)
+            if index_of_coln != -1:
+                main_theme = fuzzy_best_match(comment.text[0:index_of_coln], main_theme_list, sim_value_in)
+            else:
+                main_theme = fuzzy_best_match(comment.text, main_theme_list, sim_value_in)
 
             for formated_comment in comment_sub_list:
                 # main_theme = fuzzy_best_match(formated_comment, main_theme_list)
@@ -137,12 +140,11 @@ def store_data(file_in, sim_value_in, initialized_list):
                             theme_in_list = True
                     
                     if theme_in_list == False:
-                        theme_dict[main_theme] = []  
+                        theme_dict[main_theme] = []
                     
                     #adds the appropriate 
                     print("addings")
                     theme_dict[main_theme].append(SubTheme(sub_theme))
-                    print(len(theme_dict))
                 index_of_curr = theme_dict[main_theme].index(SubTheme(sub_theme))
                 # print(formated_comment)
                 # print(replace_entities(single_orig_text))
