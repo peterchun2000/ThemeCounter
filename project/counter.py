@@ -106,14 +106,15 @@ def store_data(file_in, sim_value_in, initialized_list):
                 continue
             comment_sub_list = []
             # splitter
+            index_of_coln = comment.text.find(":")
             mod_comment = comment.text.replace("and","/")
             index_slash = mod_comment.find("/")
             if index_slash > 0:
-                comment_sub_list.append(mod_comment[0:index_slash])
+                comment_sub_list.append(mod_comment[index_of_coln:index_slash])
                 comment_sub_list.append(mod_comment[index_slash+1:])
             else:
                 comment_sub_list.append(mod_comment)
-            index_of_coln = comment.text.find(":")
+            
             #sets main theme
             if index_of_coln != -1:
                 main_theme = fuzzy_best_match(comment.text[0:index_of_coln], main_theme_list, sim_value_in)
