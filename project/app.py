@@ -56,9 +56,6 @@ def my_form():
         return render_template('index.html',t_val = session['thresh_val'] )
     except:
         session['thresh_val'] = .65
-        # session['theme_dict'] = ""
-        # session['main_theme_list'] = []
-        # session['sub_code_list'] = []
         return render_template('index.html',t_val = .65 )
 
 

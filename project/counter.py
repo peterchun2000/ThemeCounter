@@ -93,7 +93,7 @@ def store_data(file_in, sim_value_in, initialized_list):
                 single_orig_text +=  "\n" + curr_text.text
 
         except:
-
+            print("bad")
         parent_of_cmmt = cmmt.parent.parent
         comments = parent_of_cmmt.find_all("span")
         for comment in comments:
@@ -106,7 +106,7 @@ def store_data(file_in, sim_value_in, initialized_list):
             mod_comment = comment.text.replace("and","/")
             index_slash = mod_comment.find("/")
             if index_slash > 0:
-                comment_sub_list.append(mod_comment[index_of_coln:index_slash])
+                comment_sub_list.append(mod_comment[index_of_coln+1:index_slash])
                 comment_sub_list.append(mod_comment[index_slash+1:])
             else:
                 if index_of_coln != -1:
@@ -155,17 +155,21 @@ def store_data(file_in, sim_value_in, initialized_list):
 def fuzzy_best_match(cmmt, list_in, sim_value_in):
     sim_value = sim_value_in
     largest_sim_val = 0
+
     best_match = ""
     for code in list_in:
+        single_code = code.split('|')[0]
+        if single_code.lower().replace(' ','') == cmmt[1:].lower().replace(' ',''):
+            largest_sim_val = 1
+            best_match = str(single_code)
         curr_sim_val = fuzzy_finder(code, cmmt)
-        if curr_sim_val > largest_sim_val:
+        elif curr_sim_val > largest_sim_val:
             largest_sim_val = curr_sim_val
-            best_match = str(code)
-    best_match_list = best_match.split('|')
+            best_match = str(single_code)
+    
     if largest_sim_val >= sim_value:
-        return best_match_list[0]
+        return best_match
     else:
-        print("loswer comment" + cmmt)
         return cmmt
 
 
