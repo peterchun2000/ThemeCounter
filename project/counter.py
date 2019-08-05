@@ -110,7 +110,7 @@ def store_data(file_in, sim_value_in, initialized_list):
                 comment_sub_list.append(mod_comment[index_slash+1:])
             else:
                 if index_of_coln != -1:
-                    comment_sub_list.append(mod_comment[index_of_coln:])
+                    comment_sub_list.append(mod_comment[index_of_coln+1:])
                 else:
                     comment_sub_list.append(mod_comment)
             
