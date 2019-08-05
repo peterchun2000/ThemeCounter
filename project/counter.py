@@ -160,10 +160,9 @@ def fuzzy_best_match(cmmt, list_in, sim_value_in):
     for code in list_in:
         single_code = code.split('|')[0]
         if single_code.lower().replace(' ','') == cmmt[1:].lower().replace(' ',''):
-            largest_sim_val = 1
-            best_match = str(single_code)
+            return str(single_code)
         curr_sim_val = fuzzy_finder(code, cmmt)
-        elif curr_sim_val > largest_sim_val:
+        if curr_sim_val > largest_sim_val:
             largest_sim_val = curr_sim_val
             best_match = str(single_code)
     
