@@ -44,23 +44,23 @@ def downloadFile ():
 def upload():
     if request.form.get('submit_chart') =="Submit File":
         # check if the post request has the file part
-		if 'file' not in request.files:
-			print('No file part')
-			return redirect(request.url)
-		file = request.files['file']
-		if file.filename == '':
-			print('No file selected for uploading')
-			return redirect(request.url)
-		if file and allowed_file(file.filename):
+        if 'file' not in request.files:
+            print('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            print('No file selected for uploading')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
             # if os.path.exists('../project/code_chart.txt'):
             #     os.remove('../project/code_chart.txt')
-			filename = "code_chart.txt"
-			file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-			print('File successfully uploaded')
-			return redirect('/')
-		else:
-			print('Allowed file type is txt')
-			return redirect(request.url)
+            filename = "code_chart.txt"
+            file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+            print('File successfully uploaded')
+            return redirect('/')
+        else:
+            print('Allowed file type is txt')
+            return redirect(request.url)
 
     if request.form.get('submit_t') =="enter":
         processed_text = request.form['text']
