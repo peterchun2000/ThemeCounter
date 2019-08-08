@@ -54,7 +54,7 @@ def upload():
         if file and allowed_file(file.filename):
             # if os.path.exists('../project/code_chart.txt'):
             #     os.remove('../project/code_chart.txt')
-            filename = "code_chart.txt"
+            filename = "code_chart2.txt"
             file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
             print('File successfully uploaded')
             return redirect('/')
