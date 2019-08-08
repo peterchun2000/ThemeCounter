@@ -37,43 +37,42 @@
         <div class="row">
             <div class="col col-lg-3"></div>
             <div class="col col-lg-6">
-            <h4>Directions:</h4>
-            <ul class="list-group">
-                <li class="list-group-item list-group-item-info">Download an HTML Version of your GoogleDoc (File ➡️Download as ➡️Web Page. Then Extract/Unzip)</li>
-                <li class="list-group-item list-group-item-info">Upload the File or Multiple Files by Holding Down CTRL & Clicking</li>
-                <li class="list-group-item list-group-item-info">Press Submit Files & ⏳Wait a Few Seconds ⌛</li> 
-            </ul> 
+                <h4>Directions:</h4>
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-info">Download an HTML Version of your GoogleDoc (File ➡️Download as ➡️Web Page. Then Extract/Unzip)</li>
+                    <li class="list-group-item list-group-item-info">Upload the File or Multiple Files by Holding Down CTRL & Clicking</li>
+                    <li class="list-group-item list-group-item-info">Press Submit Files & ⏳Wait a Few Seconds ⌛</li> 
+                </ul> 
+            </div>
         </div>
         <div class="row text-center">
-            <div class="col col-lg-4"></div>
-            <div class="col col-lg-4">
+            <div class="col col-sm-4"></div>
+            <div class="col col-sm-4">
                 <form class="form-inline center-block" action="/codebook-rules">
-                    <p>
-                        <input class="btn btn-primary" type="submit" value="Code Book Rules">
-                    </p>
+                    <input class="btn btn-primary" type="submit" value="Code Book Rules">
                 </form>
             </div>
-            </div>
-        </div>
+            <div class="col col-lg-4"></div>
         </div>
     </div>
 </div>
-</div>
 
-<div class="container-fluid text-center">
-    <div class="row">
-        <div class="col-lg-4">
-            <h4>Enter Desired Threshold Value from 0.0 - 1.0 </h4>
-            <form  method="POST" class="form-inline center-block">
-                <div class="input-group">
-                    <input name="text" type="text" class="form-control" placeholder="Threshold Value">
-                </div>
-                <button type="submit" name="submit_t" value="enter" class="btn btn-primary">Enter</button>
-            </form>
+<div class="container-fluid text-center ">
+    <div class="row-fluid">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-3">
+            <h4>Desired Threshold Value from 0.0 - 1.0 </h4>
+            <div class="input-group">
+                <input name="text" type="text" class="form-control" placeholder="Threshold Value">
+                <span class="input-group-btn">
+                    <button type="submit" name="submit_t" value="enter" class="btn btn-primary">Enter</button>
+                </span>
+            </div>
             <h5>
                 Threshold Value: {{t_val}}
             </h5>
         </div>
+
         <div class="col-lg-4">
             <h4>Select File(s)</h4>
 
@@ -84,29 +83,36 @@
                         Browse...
                     </label>
                     <input id="browse-text" type="text" class="form-control" readonly="">
+                    <span class="input-group-btn">
+                        <button type="submit" value="Submit Files" name="submit_f" class="btn btn-primary">Submit Files</button>
+                    </span>
                 </div>
-                <button type="submit" value="Submit Files" name="submit_f" class="btn btn-primary">Submit Files</button>
             </form>
         </div>
 
-        <div class="col-lg-4">
+        <div class="col-lg-3">
         <h4>Upload New Codebook</h4>
             <form method="post" action="/" enctype="multipart/form-data">
-                <dl>
-                    <p>
+                <div class="input-group">
+                    <dl>
                         <span class="btn btn-default btn-file">
                             <input type="file" id="code_book_file" type="file" name="file" autocomplete="off" required>
-                        </span>
-                        <input data-geocode='{{ auth_code }}' onclick="auth_func()" class="btn btn-primary" id="auth_btn" type="submit" name="submit_chart" value="Submit File">
-                    </p>
-                </dl>
+                        </span>     
+                    </dl>
+                    <span class="input-group-btn"></span>
+                        <form class="form-inline center-block input-group-btn" action="/download">
+                            <input onclick="auth_func()" class="btn btn-primary" id="auth_btn" type="submit" name="submit_chart" value="Submit File">
+                        </form>
+                    </span>
+                </div>
             </form>
             <form class="form-inline center-block" action="/download">
-                <p>
-                    <input class="btn btn-primary" type="submit" name="download_btn" value="Download Current Codebook">
-                </p>
+                
+                <input class="btn btn-primary" type="submit" name="download_btn" value="Download Current Codebook">
+
             </form>
         </div>
+        <div class="col-lg-1"></div>
     </div>  
 </div>
 <hr>
