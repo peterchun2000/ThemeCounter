@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from bs4 import BeautifulSoup
 import re
 
-from .counter import start, make_table, get_cmmts, Comment, SubTheme
+from counter import start, make_table, get_cmmts, Comment, SubTheme
 
 from flask_bootstrap import Bootstrap
 
@@ -19,9 +19,13 @@ import keyring
 app = Flask(__name__)  
 Bootstrap(app)
 
-keyring.set_password("my_api_key", "auth_pass", "BestProject!")
+is_prod = os.environ.get('IS_HEROKU', None)
 
-'ABC1234SEKRIT'
+if is_prod:
+    auth_pass = os.environ.get('auth_pass')
+else:
+    auth_pass = "asdf1234"
+
 app.secret_key = 'sads9f8b378asbfas9ah'
 app.config['UPLOAD_PATH'] = '../project'
 
@@ -65,7 +69,7 @@ def upload():
             session['thresh_val'] = float(processed_text)
         except:
             session['thresh_val'] = .65
-        return render_template('index.html',t_val = session['thresh_val'], auth_code = keyring.get_password("my_api_key", "auth_pass"))
+        return render_template('index.html',t_val = session['thresh_val'], auth_code = auth_pass)
     elif request.form.get('submit_f') =="Submit Files":
         if 'thresh_val' not in session:
             session['thresh_val'] = .65
@@ -79,17 +83,17 @@ def upload():
         result_list = start(uploaded_files,session['thresh_val'])
         table_html = make_table(result_list)
 
-        return render_template('index.html', table = table_html, t_val = session['thresh_val'], auth_code = keyring.get_password("my_api_key", "auth_pass"))
+        return render_template('index.html', table = table_html, t_val = session['thresh_val'], auth_code = auth_pass)
 
 @app.route('/')
 def my_form():
     session.clear()
     print("sleared session")
     try:
-        return render_template('index.html',t_val = session['thresh_val'], auth_code = keyring.get_password("my_api_key", "auth_pass") )
+        return render_template('index.html',t_val = session['thresh_val'], auth_code = auth_pass)
     except:
         session['thresh_val'] = .65
-        return render_template('index.html',t_val = .65, auth_code = keyring.get_password("my_api_key", "auth_pass") )
+        return render_template('index.html',t_val = .65, auth_code =auth_pass )
 
 
 if __name__ == '__main__':
