@@ -1,0 +1,47 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Theme Counter{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet"
+      href="{{url_for('.static', filename='css/main.css')}}">
+{% endblock %}
+{% block content %}
+
+<div class="jumbotron">
+    <div class="row">
+        <div class="col col-lg-1"></div>
+        <div class="col col-lg-1">
+            <form class="form-inline center-block" action="/">
+                <p>
+                    <input class="btn btn-primary" type="submit" value="Home">
+                </p>
+            </form>
+        </div>
+    </div>
+    <h1 class="text-center">Codebook Rules</h1>
+    <p class="text-center">For When You Want to Update the Codebook</p>
+    <p class="text-center">QA Engineer walks into a bar... Orders a beer. Orders 0 beers. Orders 999999999 beers. Orders a lizard. Orders -1 beers. Orders a sfdeljknesv.</p>
+    <div class="container-fluid">
+        <div class="row">
+                <div class="col col-lg-3"></div>
+                <div class="col col-lg-6">
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-info">Download the current Themebook in the mainpage for guidance</li> 
+                    <li class="list-group-item list-group-item-info">Only Upload a .txt file</li> 
+                    <li class="list-group-item list-group-item-info">Each Theme will have it's own line</li> 
+                    <li class="list-group-item list-group-item-info">Use an "*" as the first character for every Main Theme</li>
+                    <li class="list-group-item list-group-item-info">Add all Sub Themes associated with the Main Theme underneath</li>
+                    <li class="list-group-item list-group-item-info">Use a "|" to separate similar phrases within a theme</li> 
+                    <li class="list-group-item list-group-item-info">Example: *Pre-College|pre college|before college</li> 
+                    <li class="list-group-item list-group-item-info">Satisfied that his testing has been thorough the engineer signs off and the bar goes into production. The first customer walks into the bar and asks where the bathroom is. The bar catches fire and burns to the ground</li> 
+                </ul> 
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

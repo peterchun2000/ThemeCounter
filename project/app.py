@@ -40,6 +40,10 @@ def downloadFile ():
     path = "../project/code_chart.txt"
     return send_file(path, as_attachment=True)
 
+@app.route('/codebook-rules')
+def sendRules ():
+    return render_template('rules.html')
+
 @app.route("/", methods=["POST"])
 def upload():
     if request.form.get('submit_chart') =="Submit File":
@@ -81,11 +85,12 @@ def upload():
         g.sub_code_list = []
         uploaded_files = request.files.getlist("file[]")
         print (uploaded_files)
-
-        result_list = start(uploaded_files,session['thresh_val'])
-        table_html = make_table(result_list)
-
-        return render_template('index.html', table = table_html, t_val = session['thresh_val'], auth_code = auth_pass)
+        try:
+            result_list = start(uploaded_files,session['thresh_val'])
+            table_html = make_table(result_list)
+            return render_template('index.html', table = table_html, t_val = session['thresh_val'], auth_code = auth_pass)
+        except:
+            return render_template('index.html', table = "error, prob a bad codebook", t_val = session['thresh_val'], auth_code = auth_pass)
 
 @app.route('/')
 def my_form():
