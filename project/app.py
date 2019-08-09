@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from bs4 import BeautifulSoup
 import re
 
-from .counter import start, make_table, get_cmmts, Comment, SubTheme
+from counter import start, make_table, get_cmmts, Comment, SubTheme
 
 from flask_bootstrap import Bootstrap
 
@@ -73,6 +73,8 @@ def upload():
         print(processed_text)
         try:
             session['thresh_val'] = float(processed_text)
+            if session['thresh_val'] > 1:
+                session['thresh_val'] = 1.0
         except:
             session['thresh_val'] = .65
         return render_template('index.html',t_val = session['thresh_val'], auth_code = auth_pass)
