@@ -36,7 +36,7 @@ MechanicalSoup==0.11.0
 mechanize==0.4.1
 nltk==3.4.4
 numpy==1.16.4
-Pillow==5.4.1
+Pillow==8.2.0
 praw==6.0.0
 prawcore==1.0.0
 pycodestyle==2.5.0
